@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from drf_extra_fields.fields import Base64ImageField
 
 from task_app.models import UserProfile
 
@@ -12,9 +13,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(required=True)
+    #using extra drf field to save base64 images
+    photo = Base64ImageField(required=True)
     class Meta:
         model = UserProfile
-        fields = ("name", "user")
+        fields = ("name", "user", "photo")
 
     def create(self, validated_data):
         #first get user field from json request
