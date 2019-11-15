@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from rest_framework import status
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework.exceptions import APIException
 
 from task_app.models import UserProfile
 
@@ -22,8 +24,19 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         #first get user field from json request
         user_data = validated_data.pop('user')
+
         #create a user django after atatch in profile model
-        user = User.objects.create_user(username=user_data['username'], password=user_data['password'])
+        user = User(username=user_data['username'])
+        user.set_password(user_data['password'])
+        user.save()
+             
         #create profile instance using user.
         profile = UserProfile.objects.create(user=user, **validated_data)
         return profile
+
+    def validate_user(self, value):
+        if(User.objects.filter(username=value['username']).exists()):
+            print("REPETIDO")
+            raise APIException(detail="Usuário já exe", code=status.HTTP_406_NOT_ACCEPTABLE)
+        print("PASSOU!")
+        return value
