@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from drf_extra_fields.fields import Base64ImageField
 
 from task_app.models import UserProfile
+from task_app.utils import EmailUnavailable
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.CharField(source="username")
@@ -22,8 +23,17 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         #first get user field from json request
         user_data = validated_data.pop('user')
+
         #create a user django after atatch in profile model
-        user = User.objects.create_user(username=user_data['username'], password=user_data['password'])
+        user = User(username=user_data['username'])
+        user.set_password(user_data['password'])
+        user.save()
+             
         #create profile instance using user.
         profile = UserProfile.objects.create(user=user, **validated_data)
         return profile
+
+    def validate_user(self, value):
+        if(User.objects.filter(username=value['username']).exists()):
+            raise EmailUnavailable()
+        return value
