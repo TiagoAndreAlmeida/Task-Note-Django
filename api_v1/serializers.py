@@ -1,10 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from rest_framework import status
 from drf_extra_fields.fields import Base64ImageField
-from rest_framework.exceptions import APIException
 
 from task_app.models import UserProfile
+from task_app.utils import EmailUnavailable
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.CharField(source="username")
@@ -36,7 +35,5 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def validate_user(self, value):
         if(User.objects.filter(username=value['username']).exists()):
-            print("REPETIDO")
-            raise APIException(detail="Usuário já exe", code=status.HTTP_406_NOT_ACCEPTABLE)
-        print("PASSOU!")
+            raise EmailUnavailable()
         return value
