@@ -12,7 +12,7 @@ class UserProfileView(views.APIView):
         try:
             _username = request.data["email"] or None
             user = User.objects.get(username=_username)
-            return Response({"message": "user already exist"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+            return Response({"message": "Já existe um usuário com esse E-mail"}, status=status.HTTP_406_NOT_ACCEPTABLE)
         except User.DoesNotExist:
             user = User.objects.create_user(username=request.data["email"], password=request.data["password"])
             data = {
