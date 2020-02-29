@@ -9,3 +9,13 @@ class UserProfile (models.Model):
 
     def __str__(self):
         return self.name
+
+class Task (models.Model):
+    title = models.CharField(verbose_name="Título", max_length=100, blank=False, null=False)
+    description = models.CharField(verbose_name="Descrição", max_length=100, blank=False, null=False)
+    done = models.BooleanField(verbose_name="Feito", default=False)
+    dead_line = models.DateField(verbose_name="Vencimento")
+    owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
