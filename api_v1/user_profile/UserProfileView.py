@@ -40,7 +40,7 @@ class UserProfileView(views.APIView):
     def auth_login(request):
         user = authenticate(username=request.data["username"], password=request.data["password"])
         if user is None:
-            raise serializers.ValidationError("Invalid Username/Password")
+            raise serializers.ValidationError({"message":"Invalido Username/Password"})
         
         profile = UserProfile.objects.get(user__pk=user.pk)
         serializer = UserProfileSerializer(profile)
