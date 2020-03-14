@@ -11,6 +11,8 @@ class UserProfileView(views.APIView):
     def post(self, request, *args, **kwargs):
         try:
             _username = request.data["email"] or None
+            if _username == None:
+                return Response({"message": "O E-mail precisa ser válido"}, status=status.HTTP_406_NOT_ACCEPTABLE)
             user = User.objects.get(username=_username)
             return Response({"message": "Já existe um usuário com esse E-mail"}, status=status.HTTP_406_NOT_ACCEPTABLE)
         except User.DoesNotExist:
@@ -21,9 +23,11 @@ class UserProfileView(views.APIView):
                 "photo": request.data["photo"]
             }
             serializer = UserProfileSerializer(data=data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            else:
+                return Response({"message": "Preencha os campos corretamente."}, status=status.HTTP_406_NOT_ACCEPTABLE)
     
     def patch(self, request):
         try:
