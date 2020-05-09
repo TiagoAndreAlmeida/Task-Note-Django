@@ -128,3 +128,9 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'docs')
 MEDIA_URL = '/media/'
+
+#trying to import dev settings
+try:
+    from .local_settings import *
+except ImportError as e:
+    pass

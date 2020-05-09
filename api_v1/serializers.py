@@ -19,7 +19,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ("id", "name", "user", "photo")
-        # depth = 1
 
     # def create(self, validated_data):
     #     #first get user field from json request

@@ -8,10 +8,14 @@ from task_app.models import Task
 class TaskView(viewsets.ViewSet):
     
     def list(self, request, *args, **kwargs):
-        # print(request.query_params["owner"])
-        queryset = Task.objects.filter(owner=request.query_params["owner"])
-        serializer = TaskSerializer(queryset, many=True)
-        return Response(serializer.data)
+        _owner = request.GET.get("owner", "")
+        if _owner != "":
+            queryset = Task.objects.filter(owner=_owner)
+            serializer = TaskSerializer(queryset, many=True)
+            return Response(serializer.data)
+        else:
+            return Response({"message": "owner params must be send"}, status=status.HTTP_400_BAD_REQUEST)
+        
 
     def create(self, request, *args, **kwargs):
         serializer = TaskSerializer(data=request.data)
