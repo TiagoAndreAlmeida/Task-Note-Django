@@ -13,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ("id", "email", "password")
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    # user = UserSerializer(required=True)
+    user = UserSerializer(read_only=True)
     #using extra drf field to save base64 images
     photo = Base64ImageField(required=True)
     class Meta:
