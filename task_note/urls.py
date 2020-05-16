@@ -15,6 +15,5 @@ router.register('v1/tasks', TaskView, basename="Tasks")
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    # url(r'^api/v1/user_profile', UserProfileView),
     url(r'^api/v1/auth_login/', UserProfileView.auth_login),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
