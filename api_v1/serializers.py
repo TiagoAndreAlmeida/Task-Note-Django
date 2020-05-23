@@ -13,29 +13,24 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    password = serializers.CharField(write_only=True)
     photo = Base64ImageField()
     
     class Meta:
         model = UserProfile
-        fields = ("id", "name", "photo", "email", 'user')
-        extra_kwargs = {'user': {'write_only': True}}
+        fields = ("id", "name", "photo", "email", 'password')
 
     def create(self, validated_data):
-        #first get user field from json request
-        user_data = validated_data.pop('user')
-        print(user_data)
-        user = User.objects.create_user(**user_data)
+        """first get remove password param with pop operator 
+        from json request because it dont exist on Profile model 
+        and is used only for write"""
+        password = validated_data.pop('password', None)
+        user = User.objects.create_user(username=validated_data.get("email", None), password=password)
         user.save()
              
         #create profile instance using user.
         profile = UserProfile.objects.create(user=user, **validated_data)
         return profile
-
-    # def validate_user(self, value):
-    #     if(User.objects.filter(username=value['username']).exists()):
-    #         raise EmailUnavailable()
-    #     return value
 
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
